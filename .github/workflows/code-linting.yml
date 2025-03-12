@@ -28,10 +28,13 @@ jobs:
         run: composer require --dev squizlabs/php_codesniffer
 
       - name: Check Installed Composer Packages
-        run: composer show
+        run: composer show | grep phpcs
 
-      - name: Check PHPCS Existence
+      - name: List vendor/bin Directory
         run: ls -lah vendor/bin/
+
+      - name: Find PHPCS
+        run: which phpcs
 
       - name: Run PHP_CodeSniffer
         run: ./vendor/bin/phpcs --standard=PSR12 app/
