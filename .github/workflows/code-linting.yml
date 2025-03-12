@@ -27,5 +27,8 @@ jobs:
       - name: Install PHP_CodeSniffer
         run: composer global require "squizlabs/php_codesniffer=*"
 
+      - name: Add Composer Global Bin to PATH
+        run: echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
       - name: Run PHP_CodeSniffer
-        run: ~/.composer/vendor/bin/phpcs --standard=PSR12 app/
+        run: phpcs --standard=PSR12 app/
