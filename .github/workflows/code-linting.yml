@@ -1,40 +1,31 @@
-name: Laravel Code Linting
+name: Fix Code Style
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.4]
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
-          tools: composer
+          php-version: ${{ matrix.php }}
+          extensions: json, dom, curl, libxml, mbstring
+          coverage: none
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Install Pint
+        run: composer global require laravel/pint
 
-      - name: Install PHP_CodeSniffer
-        run: composer require --dev squizlabs/php_codesniffer
+      - name: Run Pint
+        run: pint
 
-      - name: Check Installed Composer Packages
-        run: composer show | grep phpcs
-
-      - name: List vendor/bin Directory
-        run: ls -lah vendor/bin/
-
-      - name: Find PHPCS
-        run: which phpcs
-
-      - name: Run PHP_CodeSniffer
-        run: ./vendor/bin/phpcs --standard=PSR12 app/
+      - name: Commit linted files
+        uses: stefanzweifel/git-auto-commit-action@v5
